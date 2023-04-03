@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ma bibliothèque</title>
+</head>
+<body>
+    <h1>Ma bibliothèque</h1>
+
+    <div id="livres">
+        <!-- Les livres seront affichés ici -->
+    </div>
+
+    <div id="bibliotheque">
+        <h2>Ma bibliothèque</h2>
+        <ul id="liste-livres">
+            <!-- Les livres de l'utilisateur seront affichés ici -->
+        </ul>
+    </div>
+
+    <script>
+        // Récupérer les données des livres depuis l'API
+        fetch('https://www.googleapis.com/books/v1/volumes?q=subject:geography&langRestrict=fr')
+            .then(response => response.json())
+            .then(livres => {
+                const livresDiv = document.getElementById('livres');
+                const bibliothequeListe = document.getElementById('liste-livres');
+
+                // Pour chaque livre, créer un élément HTML et l'ajouter à la page
+                livres.forEach(livre => {
+                    const livreDiv = document.createElement('div');
+                    livreDiv.innerHTML = `
+                        <h2>${livre.titre}</h2>
+                        <p>${livre.auteur}</p>
+                        <img>${livre.image}</img>
+
+                        <button class="ajouter" data-livre-id="${livre.id}">Ajouter à ma bibliothèque</button>
+                    `;
+                    livresDiv.appendChild(livreDiv);
+                });
+
+                // Ajouter un gestionnaire d'événements pour chaque bouton "Ajouter à ma bibliothèque"
+                const boutonsAjouter = document.querySelectorAll('.ajouter');
+                boutonsAjouter.forEach(bouton => {
+                    bouton.addEventListener('click', () => {
+                        const livreId = bouton.dataset.livreId;
+                        ajouterLivre(livreId);
+                    });
+                });
+
+                // Fonction pour ajouter un livre à la bibliothèque de l'utilisateur
+                function ajouterLivre(livreId) {
+                    
+                    // Code pour ajouter le livre à la bibliothèque de l'utilisateur
+                    const livre = livres.find(livre => livre.id === livreId);
+                    const bibliothequeLivre = document.createElement('li');
+                    bibliothequeLivre.textContent = livre.titre;
+                    bibliothequeListe.appendChild(bibliothequeLivre);
+                }
+            })
+            .catch(error => console.error(error));
+    </script>
+</body>
+</html>
